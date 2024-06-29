@@ -1,12 +1,13 @@
 <script lang='ts'>
 import type { EventTemplate } from 'nostr-tools/pure';
-import { linkGitHub } from '$lib/config';
 import * as nip96 from 'nostr-tools/nip96';
 import * as nip98 from 'nostr-tools/nip98';
+import { uploaderURLs, linkGitHub } from '$lib/config';
 
+let targetUrl: string;
 let filesToUpload: FileList;
-let result: string;
-const targetUrl = 'https://yabu.me';
+let uploadedFileUrl: string;
+let fileUploadResponse: nip96.FileUploadResponse;
 
 const upload = async () => {
 	const nostr = window.nostr;
@@ -21,8 +22,7 @@ const upload = async () => {
 	}
 	if (file === undefined)
 		return;
-	const r = await myUploadFile(file, c.api_url, s);
-	result = JSON.stringify(r, undefined, 2);
+	fileUploadResponse = await myUploadFile(file, c.api_url, s);
 };
 
 const myUploadFile = async (
@@ -91,6 +91,9 @@ const myUploadFile = async (
 	return parsedResponse;
 };
 
+$: uploadedFileUrl = fileUploadResponse?.nip94_event?.tags.filter(tag => tag[0] === 'url').at(0)?.at(1) ?? '';
+$: result = JSON.stringify(fileUploadResponse, undefined, 2);
+
 </script>
 
 <svelte:head>
@@ -100,16 +103,29 @@ const myUploadFile = async (
 <header><h1>Nostr Learn NIP-96</h1></header>
 <main>
 <dl>
-	<dt>Target URL</dt>
-	<dd>{targetUrl}</dd>
+	<dt><label for="uploader-url">Target URL</label></dt>
+	<dd><select id="uploader-url" bind:value={targetUrl}>
+		{#each uploaderURLs as url}
+		<option value={url}>{url}</option>
+		{/each}
+		</select>
+	</dd>
+	<dt><label for="select-file">Select file to upload</label></dt>
+	<dd><input id="select-file" type="file" bind:files={filesToUpload} /></dd>
+	<dt><label for="upload">Upload</label></dt>
+	<dd><button id="upload" on:click={upload} disabled={filesToUpload === undefined || filesToUpload.length === 0 }>Upload</button></dd>
+	<dt><label for="uploaded-file-url">Uploaded file URL</label></dt>
+	<dd><input id="uploaded-file-url" bind:value={uploadedFileUrl} /></dd>
+	<dt>Result</dt>
+	<dd><pre><code>{result ?? ''}</code></pre></dd>
 </dl>
-<input type="file" bind:files={filesToUpload} />
-<button on:click={upload}>Upload</button>
-<pre><code>{result ? result : '(result)'}</code></pre>
 </main>
 <footer><a href={linkGitHub} target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 
 <style>
+#uploaded-file-url {
+	width: 100%;
+}
 footer {
 	text-align: center;
 }
