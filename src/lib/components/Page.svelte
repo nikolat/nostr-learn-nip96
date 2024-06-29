@@ -109,6 +109,12 @@ $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 		<option value={url}>{url}</option>
 		{/each}
 		</select>
+		<details>
+			<summary>Server Config</summary>
+			{#await nip96.readServerConfig(targetUrl) then serverConfig}
+			<pre><code>{JSON.stringify(serverConfig, undefined, 2)}</code></pre>
+			{/await}
+		</details>
 	</dd>
 	<dt><label for="select-file">Select file to upload</label></dt>
 	<dd><input id="select-file" type="file" bind:files={filesToUpload} /></dd>
