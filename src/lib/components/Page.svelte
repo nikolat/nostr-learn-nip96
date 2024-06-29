@@ -100,7 +100,7 @@ $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 	<title>Nostr Learn NIP-96</title>
 </svelte:head>
 
-<header><h1>Nostr Learn NIP-96</h1></header>
+<header><h1>Nostr Learn <a href="https://github.com/nostr-protocol/nips/blob/master/96.md" target="_blank" rel="noopener noreferrer">NIP-96</a></h1></header>
 <main>
 <dl>
 	<dt><label for="uploader-url">Target URL</label></dt>
@@ -112,7 +112,7 @@ $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 	</dd>
 	<dt><label for="select-file">Select file to upload</label></dt>
 	<dd><input id="select-file" type="file" bind:files={filesToUpload} /></dd>
-	<dt><label for="upload">Upload</label></dt>
+	<dt><label for="upload">Upload</label> (required <a href="https://github.com/nostr-protocol/nips/blob/master/07.md" target="_blank" rel="noopener noreferrer">NIP-07</a> extension)</dt>
 	<dd><button id="upload" on:click={upload} disabled={filesToUpload === undefined || filesToUpload.length === 0 }>Upload</button></dd>
 	<dt><label for="uploaded-file-url">Uploaded file URL</label></dt>
 	<dd><input id="uploaded-file-url" bind:value={uploadedFileUrl} /></dd>
