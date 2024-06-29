@@ -91,7 +91,7 @@ const myUploadFile = async (
 	return parsedResponse;
 };
 
-$: uploadedFileUrl = fileUploadResponse?.nip94_event?.tags.filter(tag => tag[0] === 'url').at(0)?.at(1) ?? '';
+$: uploadedFileUrl = fileUploadResponse?.nip94_event?.tags.find(tag => tag[0] === 'url')?.at(1) ?? '';
 $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 
 </script>
