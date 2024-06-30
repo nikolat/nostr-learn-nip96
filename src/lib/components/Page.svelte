@@ -54,7 +54,24 @@ $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 	<dt><label for="upload">Upload</label> (required <a href="https://github.com/nostr-protocol/nips/blob/master/07.md" target="_blank" rel="noopener noreferrer">NIP-07</a> extension)</dt>
 	<dd><button id="upload" on:click={upload} disabled={filesToUpload === undefined || filesToUpload.length === 0 }>Upload</button></dd>
 	<dt><label for="uploaded-file-url">Uploaded file URL</label></dt>
-	<dd><input id="uploaded-file-url" bind:value={uploadedFileUrl} /></dd>
+	<dd>
+		<input id="uploaded-file-url" bind:value={uploadedFileUrl} />
+		{#if uploadedFileUrl}
+			{@const m = fileUploadResponse?.nip94_event?.tags.find(tag => tag[0] === 'm')?.at(1) ?? ''}
+			{#if /^image/.test(m)}
+				<a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer"><img src={uploadedFileUrl} alt="" /></a>
+			{:else if /^video/.test(m)}
+				<video controls preload="metadata">
+					<track kind="captions">
+					<source src={uploadedFileUrl}>
+				</video>
+			{:else if /^audio/.test(m)}
+				<audio controls preload="metadata" src="{uploadedFileUrl}"></audio>
+			{:else}
+				<a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">{uploadedFileUrl}</a>
+			{/if}
+		{/if}
+	</dd>
 	<dt>Result</dt>
 	<dd><pre><code>{result ?? ''}</code></pre></dd>
 </dl>
