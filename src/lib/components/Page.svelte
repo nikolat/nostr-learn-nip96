@@ -37,6 +37,8 @@ $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 
 <header><h1>Nostr Learn <a href="https://github.com/nostr-protocol/nips/blob/master/96.md" target="_blank" rel="noopener noreferrer">NIP-96</a></h1></header>
 <main>
+<fieldset>
+<legend>Upload</legend>
 <dl>
 	<dt><label for="uploader-url">Target URL</label></dt>
 	<dd><select id="uploader-url" bind:value={targetUrl}>
@@ -46,7 +48,7 @@ $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 		</select>
 		<details>
 			<summary>Server Config</summary>
-			<pre>{#await readServerConfig(targetUrl)}{'connecting...'}{:then serverConfig}<code>{JSON.stringify(serverConfig, undefined, 2)}</code>{/await}</pre>
+			<pre>{#if targetUrl}{#await readServerConfig(targetUrl)}{'connecting...'}{:then serverConfig}<code>{JSON.stringify(serverConfig, undefined, 2)}</code>{/await}{/if}</pre>
 		</details>
 	</dd>
 	<dt><label for="select-file">Select file to upload</label></dt>
@@ -66,21 +68,25 @@ $: result = JSON.stringify(fileUploadResponse, undefined, 2);
 					<source src={uploadedFileUrl}>
 				</video>
 			{:else if /^audio/.test(m)}
-				<audio controls preload="metadata" src="{uploadedFileUrl}"></audio>
+				<audio controls preload="metadata" src={uploadedFileUrl}></audio>
 			{:else}
 				<a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">{uploadedFileUrl}</a>
 			{/if}
 		{/if}
 	</dd>
 	<dt>Result</dt>
-	<dd><pre><code>{result ?? ''}</code></pre></dd>
+	<dd><details><summary>Result</summary><pre><code>{result ?? ''}</code></pre></details></dd>
 </dl>
+</fieldset>
 </main>
 <footer><a href={linkGitHub} target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 
 <style>
+fieldset {
+	min-width: 0;
+}
 #uploaded-file-url {
-	width: 100%;
+	width: calc(100% - 1.5em);
 }
 footer {
 	text-align: center;
