@@ -1,6 +1,6 @@
 <script lang='ts'>
 import type { EventTemplate } from 'nostr-tools/pure';
-import { deleteFile, readServerConfig, type FileUploadResponse } from 'nostr-tools/nip96';
+import { deleteFile, readServerConfig, type FileUploadResponse, type OptionalFormDataFields } from 'nostr-tools/nip96';
 import { getToken } from 'nostr-tools/nip98';
 import { uploaderURLs, linkGitHub } from '$lib/config';
 import { uploadFile } from '$lib/nip96';
@@ -26,7 +26,11 @@ const uploadFileExec = async () => {
 	}
 	if (file === undefined)
 		return;
-	fileUploadResponse = await uploadFile(file, c.api_url, s);
+	const option: OptionalFormDataFields = {
+		size: String(file.size),
+		content_type: file.type,
+	};
+	fileUploadResponse = await uploadFile(file, c.api_url, s, option);
 };
 
 const deleteFileExec = async () => {
