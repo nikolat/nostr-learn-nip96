@@ -1,4 +1,4 @@
-import { validateFileUploadResponse, type FileUploadResponse, type OptionalFormDataFields } from 'nostr-tools/nip96';
+import type { FileUploadResponse, OptionalFormDataFields } from 'nostr-tools/nip96';
 
 export async function uploadFile(
 	file: File,
@@ -28,7 +28,7 @@ export async function uploadFile(
 		method: 'POST',
 		headers: {
 			Authorization: nip98AuthorizationHeader,
-//			'Content-Type': 'multipart/form-data',// <- これを入れると何故か400エラーになる
+			//'Content-Type': 'multipart/form-data',// <- これを入れると何故か400エラーになる
 		},
 		body: formData,
 	})
@@ -59,13 +59,11 @@ export async function uploadFile(
 	}
 
 	try {
-		//const parsedResponse = await response.json()// <- 何故か失敗する
-		const text = await response.text();
-		const parsedResponse = JSON.parse(text);
+		const parsedResponse = await response.json()
 	
-		if (!validateFileUploadResponse(parsedResponse)) {
-			throw new Error('Invalid response from the server!')
-		}
+		//if (!validateFileUploadResponse(parsedResponse)) {
+		//	throw new Error('Invalid response from the server!')// <- わりとInvalidになる
+		//}
 
 		return parsedResponse
 	} catch (error) {
