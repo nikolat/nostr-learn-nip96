@@ -9,11 +9,15 @@ let targetUrlToList: string;
 let fileListResponse: FileListResponse | undefined;
 let listPage: number = 0;
 let listCount: number = 10;
+let isInProcess: boolean = false;
 
 const listFilesExec = async () => {
+	isInProcess = true;
 	const nostr = window.nostr;
-	if (nostr === undefined)
+	if (nostr === undefined) {
+		isInProcess = false;
 		return;
+	}
 	const f = (e: EventTemplate) => nostr.signEvent(e);
 	const c = await readServerConfig(targetUrlToList);
 	const params = {
@@ -29,6 +33,7 @@ const listFilesExec = async () => {
 		console.error(error);
 		fileListResponse = undefined;
 	}
+	isInProcess = false;
 };
 </script>
 
@@ -48,7 +53,7 @@ const listFilesExec = async () => {
 			<input id="list-page" type="number" bind:value={listPage} />
 			<label for="list-count">Count</label>
 			<input id="list-count" type="number" bind:value={listCount} />
-			<button id="show-list" on:click={listFilesExec}>Show List</button>
+			<button id="show-list" on:click={listFilesExec} disabled={isInProcess}>Show List</button>
 		</dd>
 		<dt>Result</dt>
 		<dd class="list">

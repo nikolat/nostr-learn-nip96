@@ -7,11 +7,15 @@ import { uploaderURLs } from '$lib/config';
 let targetUrlToDelete: string;
 let fileHashToDelete: string;
 let fileDeleteResponse: any;
+let isInProcess: boolean = false;
 
 const deleteFileExec = async () => {
+	isInProcess = true;
 	const nostr = window.nostr;
-	if (nostr === undefined)
+	if (nostr === undefined) {
+		isInProcess = false;
 		return;
+	}
 	const f = (e: EventTemplate) => nostr.signEvent(e);
 	const c = await readServerConfig(targetUrlToDelete);
 	let serverApiUrl = c.api_url;
@@ -21,6 +25,7 @@ const deleteFileExec = async () => {
 	serverApiUrl += fileHashToDelete;
 	const s = await getToken(serverApiUrl, 'DELETE', f, true);
 	fileDeleteResponse = await deleteFile(fileHashToDelete, c.api_url, s);
+	isInProcess = false;
 };
 </script>
 
@@ -37,7 +42,7 @@ const deleteFileExec = async () => {
 		<dt><label for="file-hash-to-delete">The SHA-256 hash of the original file</label></dt>
 		<dd><input id="file-hash-to-delete" type="text" bind:value={fileHashToDelete} /></dd>
 		<dt><label for="delete">Delete</label> (required <a href="https://github.com/nostr-protocol/nips/blob/master/07.md" target="_blank" rel="noopener noreferrer">NIP-07</a> extension)</dt>
-		<dd><button id="delete" on:click={deleteFileExec} disabled={!fileHashToDelete}>Delete</button></dd>
+		<dd><button id="delete" on:click={deleteFileExec} disabled={!fileHashToDelete || isInProcess}>Delete</button></dd>
 		<dt>Result</dt>
 		<dd><details><summary>Result</summary><pre><code>{JSON.stringify(fileDeleteResponse, undefined, 2) ?? ''}</code></pre></details></dd>
 	</dl>

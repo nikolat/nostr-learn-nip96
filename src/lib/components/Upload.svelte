@@ -8,11 +8,15 @@ import { uploadFile } from '$lib/nip96';
 let targetUrlToUpload: string;
 let filesToUpload: FileList;
 let fileUploadResponse: FileUploadResponse;
+let isInProcess: boolean = false;
 
 const uploadFileExec = async () => {
+	isInProcess = true;
 	const nostr = window.nostr;
-	if (nostr === undefined)
+	if (nostr === undefined) {
+		isInProcess = false;
 		return;
+	}
 	const f = (e: EventTemplate) => nostr.signEvent(e);
 	const c = await readServerConfig(targetUrlToUpload);
 	const s = await getToken(c.api_url, 'POST', f, true);
@@ -20,13 +24,16 @@ const uploadFileExec = async () => {
 	for (const f of filesToUpload) {
 		file = f;
 	}
-	if (file === undefined)
+	if (file === undefined) {
+		isInProcess = false;
 		return;
+	}
 	const option: OptionalFormDataFields = {
 		size: String(file.size),
 		content_type: file.type,
 	};
 	fileUploadResponse = await uploadFile(file, c.api_url, s, option);
+	isInProcess = false;
 };
 
 $: uploadedFileUrl = fileUploadResponse?.nip94_event?.tags.find(tag => tag[0] === 'url')?.at(1) ?? '';
@@ -49,7 +56,7 @@ $: uploadedFileUrl = fileUploadResponse?.nip94_event?.tags.find(tag => tag[0] ==
 		<dt><label for="select-file">Select file to upload</label></dt>
 		<dd><input id="select-file" type="file" bind:files={filesToUpload} /></dd>
 		<dt><label for="upload">Upload</label> (required <a href="https://github.com/nostr-protocol/nips/blob/master/07.md" target="_blank" rel="noopener noreferrer">NIP-07</a> extension)</dt>
-		<dd><button id="upload" on:click={uploadFileExec} disabled={filesToUpload === undefined || filesToUpload.length === 0 }>Upload</button></dd>
+		<dd><button id="upload" on:click={uploadFileExec} disabled={filesToUpload === undefined || filesToUpload.length === 0 || isInProcess }>Upload</button></dd>
 		<dt><label for="uploaded-file-url">Uploaded file URL</label></dt>
 		<dd>
 			<input id="uploaded-file-url" type="text" value={uploadedFileUrl} readonly />
