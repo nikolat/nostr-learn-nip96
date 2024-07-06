@@ -2,9 +2,9 @@
 import type { EventTemplate } from 'nostr-tools/pure';
 import { deleteFile, readServerConfig } from 'nostr-tools/nip96';
 import { getToken } from 'nostr-tools/nip98';
-import { uploaderURLs } from '$lib/config';
 
-let targetUrlToDelete: string;
+export let uploaderURLs: string[];
+export let targetUrlToDelete: string;
 let fileHashToDelete: string;
 let fileDeleteResponse: any;
 let isInProcess: boolean = false;

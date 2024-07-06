@@ -2,10 +2,10 @@
 import type { EventTemplate } from 'nostr-tools/pure';
 import { readServerConfig } from 'nostr-tools/nip96';
 import { getToken } from 'nostr-tools/nip98';
-import { uploaderURLs } from '$lib/config';
 import { listFiles, type FileListResponse } from '$lib/nip96';
 
-let targetUrlToList: string;
+export let uploaderURLs: string[];
+export let targetUrlToList: string;
 let fileListResponse: FileListResponse | undefined;
 let listPage: number = 0;
 let listCount: number = 10;

@@ -22,6 +22,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"nostr-fetch": "^0.15.1",
 		"nostr-tools": "^2.7.0"
 	}
 }

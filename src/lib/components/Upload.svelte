@@ -2,10 +2,10 @@
 import type { EventTemplate } from 'nostr-tools/pure';
 import { readServerConfig, type FileUploadResponse, type OptionalFormDataFields } from 'nostr-tools/nip96';
 import { getToken } from 'nostr-tools/nip98';
-import { uploaderURLs } from '$lib/config';
 import { uploadFile } from '$lib/nip96';
 
-let targetUrlToUpload: string;
+export let uploaderURLs: string[];
+export let targetUrlToUpload: string;
 let filesToUpload: FileList;
 let fileUploadResponse: FileUploadResponse;
 let isInProcess: boolean = false;
