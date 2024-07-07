@@ -149,6 +149,7 @@ const getServerList = async (): Promise<string[]> => {
 }
 input:not(:checked) + .tab-item:hover {
 	opacity: 0.5;
+	cursor: pointer;
 }
 input[name="tab-item"] {
 	display: none;
