@@ -128,7 +128,7 @@
 
 <style>
   .list img {
-    max-width: 25%;
+    max-width: 24%;
     max-height: 300px;
     vertical-align: top;
   }
