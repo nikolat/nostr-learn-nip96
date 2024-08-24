@@ -1,28 +1,32 @@
 {
-	"name": "nostr-learn-nip96",
-	"version": "0.0.1",
-	"private": true,
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.2.4",
-		"@sveltejs/adapter-static": "^3.0.4",
-		"@sveltejs/kit": "^2.5.24",
-		"@sveltejs/vite-plugin-svelte": "^3.1.2",
-		"svelte": "^4.2.19",
-		"svelte-check": "^3.8.6",
-		"tslib": "^2.7.0",
-		"typescript": "^5.5.4",
-		"vite": "^5.4.2"
-	},
-	"type": "module",
-	"dependencies": {
-		"nostr-fetch": "^0.15.1",
-		"nostr-tools": "^2.7.2"
-	}
+  "name": "nostr-learn-nip96",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.2.4",
+    "@sveltejs/adapter-static": "^3.0.4",
+    "@sveltejs/kit": "^2.5.24",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "prettier": "^3.3.3",
+    "prettier-plugin-svelte": "^3.2.6",
+    "svelte": "^4.2.19",
+    "svelte-check": "^3.8.6",
+    "tslib": "^2.7.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  },
+  "dependencies": {
+    "nostr-fetch": "^0.15.1",
+    "nostr-tools": "^2.7.2"
+  },
+  "type": "module"
 }
