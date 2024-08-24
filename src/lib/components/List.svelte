@@ -35,6 +35,24 @@
     }
     isInProcess = false;
   };
+
+  const goToDeleteTab = (ox: string | undefined): void => {
+    if (ox === undefined) return;
+    const tab = document.getElementById('tab-delete') as HTMLInputElement;
+    tab.checked = true;
+    tab.click();
+    const uploader = document.getElementById(
+      'uploader-url-to-delete',
+    ) as HTMLSelectElement;
+    uploader.value = (
+      document.getElementById('uploader-url-to-list') as HTMLSelectElement
+    ).value;
+    const hash = document.getElementById(
+      'file-hash-to-delete',
+    ) as HTMLInputElement;
+    hash.value = ox;
+    hash.dispatchEvent(new Event('change'));
+  };
 </script>
 
 <fieldset class="tab-content" id="field-list">
@@ -71,21 +89,31 @@
         {#each fileListResponse.files as file}
           {@const url = file.tags.find((tag) => tag[0] === 'url')?.at(1)}
           {@const m = file.tags.find((tag) => tag[0] === 'm')?.at(1)}
+          {@const ox = file.tags.find((tag) => tag[0] === 'ox')?.at(1)}
           {#if url !== undefined && m !== undefined}
-            {#if /^image/.test(m)}
-              <a href={url} target="_blank" rel="noopener noreferrer"
-                ><img src={url} alt="" /></a
+            <span class="file-container">
+              {#if /^image/.test(m)}
+                <a href={url} target="_blank" rel="noopener noreferrer"
+                  ><img src={url} alt="" /></a
+                >
+              {:else if /^video/.test(m)}
+                <video controls preload="metadata">
+                  <track kind="captions" />
+                  <source src={url} />
+                </video>
+              {:else if /^audio/.test(m)}
+                <audio controls preload="metadata" src={url}></audio>
+              {:else}
+                <a href={url} target="_blank" rel="noopener noreferrer">{url}</a
+                >
+              {/if}
+              <button
+                class="delete"
+                on:click={() => goToDeleteTab(ox)}
+                title="Delete"
+                ><svg><use xlink:href="/trash.svg#delete"></use></svg></button
               >
-            {:else if /^video/.test(m)}
-              <video controls preload="metadata">
-                <track kind="captions" />
-                <source src={url} />
-              </video>
-            {:else if /^audio/.test(m)}
-              <audio controls preload="metadata" src={url}></audio>
-            {:else}
-              <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
-            {/if}
+            </span>
           {/if}
         {/each}
       {/if}
@@ -102,5 +130,24 @@
   .list img {
     max-width: 25%;
     max-height: 300px;
+    vertical-align: top;
+  }
+  button.delete {
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    fill: white;
+  }
+  button.delete svg {
+    width: 24px;
+    height: 24px;
+  }
+  .file-container {
+    position: relative;
+  }
+  .file-container > button.delete {
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 </style>

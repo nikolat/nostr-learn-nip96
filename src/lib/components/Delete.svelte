@@ -23,9 +23,18 @@
       serverApiUrl += '/';
     }
     serverApiUrl += fileHashToDelete;
-    const s = await getToken(serverApiUrl, 'DELETE', f, true);
-    fileDeleteResponse = await deleteFile(fileHashToDelete, c.api_url, s);
+    try {
+      const s = await getToken(serverApiUrl, 'DELETE', f, true);
+      fileDeleteResponse = await deleteFile(fileHashToDelete, c.api_url, s);
+    } catch (error) {
+      console.error(error);
+    }
     isInProcess = false;
+  };
+
+  //form List tab with dispatchEvent
+  const handleChange = (event: { currentTarget: HTMLInputElement }) => {
+    fileHashToDelete = event.currentTarget.value;
   };
 </script>
 
@@ -50,6 +59,7 @@
         id="file-hash-to-delete"
         type="text"
         bind:value={fileHashToDelete}
+        on:change={handleChange}
       />
     </dd>
     <dt>
