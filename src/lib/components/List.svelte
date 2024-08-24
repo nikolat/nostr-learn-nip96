@@ -111,7 +111,7 @@
                 class="delete"
                 on:click={() => goToDeleteTab(ox)}
                 title="Delete"
-                ><svg><use xlink:href="/trash.svg#delete"></use></svg></button
+                ><svg><use xlink:href="./trash.svg#delete"></use></svg></button
               >
             </span>
           {/if}
