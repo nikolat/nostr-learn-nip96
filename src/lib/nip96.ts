@@ -61,7 +61,7 @@ export async function uploadFile(
 		//}
 
 		return parsedResponse;
-	} catch (error) {
+	} catch (_error) {
 		throw new Error('Error parsing JSON response!');
 	}
 }
@@ -86,7 +86,7 @@ export async function listFiles(
 	// Return the response from the server
 	try {
 		return await response.json();
-	} catch (error) {
+	} catch (_error) {
 		throw new Error('Error parsing JSON response!');
 	}
 }
