@@ -4,8 +4,15 @@
 	import { getToken } from 'nostr-tools/nip98';
 	import { listFiles, type FileListResponse } from '$lib/nip96';
 
-	let { uploaderURLs, targetUrlToList }: { uploaderURLs: string[]; targetUrlToList: string } =
-		$props();
+	let {
+		uploaderURLs,
+		targetUrlToList,
+		setFileHashToDelete
+	}: {
+		uploaderURLs: string[];
+		targetUrlToList: string;
+		setFileHashToDelete: (value: string) => void;
+	} = $props();
 	let fileListResponse: FileListResponse | undefined = $state();
 	let listPage: number = $state(0);
 	let listCount: number = $state(10);
@@ -43,9 +50,7 @@
 		tab.click();
 		const uploader = document.getElementById('uploader-url-to-delete') as HTMLSelectElement;
 		uploader.value = (document.getElementById('uploader-url-to-list') as HTMLSelectElement).value;
-		const hash = document.getElementById('file-hash-to-delete') as HTMLInputElement;
-		hash.value = ox;
-		hash.dispatchEvent(new Event('change'));
+		setFileHashToDelete(ox);
 	};
 </script>
 

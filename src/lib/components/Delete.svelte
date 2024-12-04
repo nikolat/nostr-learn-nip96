@@ -3,9 +3,11 @@
 	import { deleteFile, readServerConfig } from 'nostr-tools/nip96';
 	import { getToken } from 'nostr-tools/nip98';
 
-	let { uploaderURLs, targetUrlToDelete }: { uploaderURLs: string[]; targetUrlToDelete: string } =
-		$props();
-	let fileHashToDelete: string = $state('');
+	let {
+		uploaderURLs,
+		targetUrlToDelete,
+		fileHashToDelete
+	}: { uploaderURLs: string[]; targetUrlToDelete: string; fileHashToDelete: string } = $props();
 	let fileDeleteResponse: any = $state();
 	let isInProcess: boolean = $state(false);
 
@@ -31,11 +33,6 @@
 		}
 		isInProcess = false;
 	};
-
-	//form List tab with dispatchEvent
-	const handleChange = (event: { currentTarget: HTMLInputElement }) => {
-		fileHashToDelete = event.currentTarget.value;
-	};
 </script>
 
 <fieldset class="tab-content" id="field-delete">
@@ -53,12 +50,7 @@
 			<label for="file-hash-to-delete">The SHA-256 hash of the original file</label>
 		</dt>
 		<dd>
-			<input
-				id="file-hash-to-delete"
-				type="text"
-				bind:value={fileHashToDelete}
-				onchange={handleChange}
-			/>
+			<input id="file-hash-to-delete" type="text" value={fileHashToDelete} />
 		</dd>
 		<dt>
 			<label for="delete">Delete</label> (required

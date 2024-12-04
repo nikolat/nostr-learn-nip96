@@ -11,6 +11,11 @@
 
 	let npub: string = $state('');
 	let uploaderURLs = $state(defaultUploaderURLs);
+	let fileHashToDelete: string = $state('');
+
+	const setFileHashToDelete = (value: string): void => {
+		fileHashToDelete = value;
+	};
 
 	const setUploaderURLs = async (): Promise<void> => {
 		const serverList = await getServerList();
@@ -140,8 +145,8 @@
 	<input type="radio" name="tab-item" id="tab-list" />
 	<label class="tab-item" for="tab-list">List</label>
 	<Upload {uploaderURLs} targetUrlToUpload={uploaderURLs[0]} />
-	<Delete {uploaderURLs} targetUrlToDelete={uploaderURLs[0]} />
-	<List {uploaderURLs} targetUrlToList={uploaderURLs[0]} />
+	<Delete {uploaderURLs} targetUrlToDelete={uploaderURLs[0]} {fileHashToDelete} />
+	<List {uploaderURLs} targetUrlToList={uploaderURLs[0]} {setFileHashToDelete} />
 </main>
 <footer>
 	<a href={linkGitHub} target="_blank" rel="noopener noreferrer">GitHub</a>
