@@ -13,10 +13,6 @@
 	let uploaderURLs = $state(defaultUploaderURLs);
 	let fileHashToDelete: string = $state('');
 
-	const setFileHashToDelete = (value: string): void => {
-		fileHashToDelete = value;
-	};
-
 	const setUploaderURLs = async (): Promise<void> => {
 		const serverList = await getServerList();
 		if (serverList.length > 0) {
@@ -146,7 +142,7 @@
 	<label class="tab-item" for="tab-list">List</label>
 	<Upload {uploaderURLs} targetUrlToUpload={uploaderURLs[0]} />
 	<Delete {uploaderURLs} targetUrlToDelete={uploaderURLs[0]} {fileHashToDelete} />
-	<List {uploaderURLs} targetUrlToList={uploaderURLs[0]} {setFileHashToDelete} />
+	<List {uploaderURLs} targetUrlToList={uploaderURLs[0]} bind:fileHashToDelete />
 </main>
 <footer>
 	<a href={linkGitHub} target="_blank" rel="noopener noreferrer">GitHub</a>
