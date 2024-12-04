@@ -7,11 +7,11 @@
 	let {
 		uploaderURLs,
 		targetUrlToList,
-		setFileHashToDelete
+		fileHashToDelete = $bindable()
 	}: {
 		uploaderURLs: string[];
 		targetUrlToList: string;
-		setFileHashToDelete: (value: string) => void;
+		fileHashToDelete: string;
 	} = $props();
 	let fileListResponse: FileListResponse | undefined = $state();
 	let listPage: number = $state(0);
@@ -50,7 +50,7 @@
 		tab.click();
 		const uploader = document.getElementById('uploader-url-to-delete') as HTMLSelectElement;
 		uploader.value = (document.getElementById('uploader-url-to-list') as HTMLSelectElement).value;
-		setFileHashToDelete(ox);
+		fileHashToDelete = ox;
 	};
 </script>
 
