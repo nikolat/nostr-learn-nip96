@@ -60,7 +60,7 @@
 		<dt><label for="uploader-url-to-list">Target URL</label></dt>
 		<dd>
 			<select id="uploader-url-to-list" bind:value={targetUrlToList}>
-				{#each uploaderURLs as url}
+				{#each uploaderURLs as url (url)}
 					<option value={url}>{url}</option>
 				{/each}
 			</select>
@@ -83,7 +83,7 @@
 		<dt>Result</dt>
 		<dd class="list">
 			{#if fileListResponse !== undefined}
-				{#each fileListResponse.files as file}
+				{#each fileListResponse.files as file, i (i)}
 					{@const url = file.tags.find((tag) => tag[0] === 'url')?.at(1)}
 					{@const m = file.tags.find((tag) => tag[0] === 'm')?.at(1)}
 					{@const ox = file.tags.find((tag) => tag[0] === 'ox')?.at(1)}

@@ -69,6 +69,7 @@ export async function uploadFile(
 export async function listFiles(
 	serverApiUrl: string,
 	nip98AuthorizationHeader: string
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
 	// Send the GET request
 	const response = await fetch(serverApiUrl, {

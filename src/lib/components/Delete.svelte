@@ -8,6 +8,7 @@
 		targetUrlToDelete,
 		fileHashToDelete
 	}: { uploaderURLs: string[]; targetUrlToDelete: string; fileHashToDelete: string } = $props();
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let fileDeleteResponse: any = $state();
 	let isInProcess: boolean = $state(false);
 
@@ -41,7 +42,7 @@
 		<dt><label for="uploader-url-to-delete">Target URL</label></dt>
 		<dd>
 			<select id="uploader-url-to-delete" bind:value={targetUrlToDelete}>
-				{#each uploaderURLs as url}
+				{#each uploaderURLs as url (url)}
 					<option value={url}>{url}</option>
 				{/each}
 			</select>

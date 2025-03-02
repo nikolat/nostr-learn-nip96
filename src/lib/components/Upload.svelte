@@ -51,13 +51,13 @@
 		<dt><label for="uploader-url-to-upload">Target URL</label></dt>
 		<dd>
 			<select id="uploader-url-to-upload" bind:value={targetUrlToUpload}>
-				{#each uploaderURLs as url}
+				{#each uploaderURLs as url (url)}
 					<option value={url}>{url}</option>
 				{/each}
 			</select>
 			<details>
 				<summary>Server Config</summary>
-				<pre>{#if targetUrlToUpload}{#await readServerConfig(targetUrlToUpload)}{'connecting...'}{:then serverConfig}<code
+				<pre>{#if targetUrlToUpload}{#await readServerConfig(targetUrlToUpload)}connecting...{:then serverConfig}<code
 								>{JSON.stringify(serverConfig, undefined, 2)}</code
 							>{/await}{/if}</pre>
 			</details>
