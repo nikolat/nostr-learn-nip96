@@ -80,7 +80,17 @@
 				>Upload</button
 			>
 		</dd>
-		<dt><label for="uploaded-file-url">Uploaded file URL</label></dt>
+		<dt>
+			<label for="uploaded-file-url">Uploaded file URL</label>
+			<button
+				class="copy"
+				onclick={() => {
+					navigator.clipboard.writeText(uploadedFileUrl);
+				}}
+				title="Copy to clipboard"
+				aria-label="Copy to clipboard"><svg><use xlink:href="./copy.svg#copy"></use></svg></button
+			>
+		</dt>
 		<dd>
 			<input id="uploaded-file-url" type="text" value={uploadedFileUrl} readonly />
 			{#if uploadedFileUrl}
@@ -111,3 +121,19 @@
 		</dd>
 	</dl>
 </fieldset>
+
+<style>
+	button.copy {
+		padding: 0;
+		width: 24px;
+		height: 24px;
+		fill: white;
+	}
+	button.copy svg {
+		width: 24px;
+		height: 24px;
+	}
+	button.copy:active > svg {
+		fill: yellow;
+	}
+</style>
