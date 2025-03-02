@@ -125,13 +125,13 @@
 <style>
 	button.copy {
 		padding: 0;
-		width: 24px;
-		height: 24px;
+		width: 20px;
+		height: 20px;
 		fill: white;
 	}
 	button.copy svg {
-		width: 24px;
-		height: 24px;
+		width: 16px;
+		height: 16px;
 	}
 	button.copy:active > svg {
 		fill: yellow;
