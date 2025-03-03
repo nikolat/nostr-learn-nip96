@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { NostrFetcher } from 'nostr-fetch';
 	import type { NostrEvent } from 'nostr-tools/pure';
-	import type { RelayRecord } from 'nostr-tools/relay';
 	import { normalizeURL } from 'nostr-tools/utils';
 	import * as nip19 from 'nostr-tools/nip19';
 	import { defaultUploaderURLs, defaultRelays, linkGitHub } from '$lib/config';
@@ -33,22 +32,6 @@
 				return;
 			}
 			npub = nip19.npubEncode(pubkey);
-		}
-		if (pubkey !== undefined && nostr?.getRelays) {
-			let rr: RelayRecord;
-			try {
-				rr = await nostr.getRelays();
-			} catch (error) {
-				console.error(error);
-				return;
-			}
-			const relays: string[] = [];
-			for (const [k, v] of Object.entries(rr)) {
-				if (v.read && URL.canParse(k)) relays.push(normalizeURL(k));
-			}
-			if (relays.length > 0) {
-				npub = nip19.nprofileEncode({ pubkey, relays });
-			}
 		}
 		await setUploaderURLs();
 	};
