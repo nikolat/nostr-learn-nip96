@@ -2,11 +2,11 @@
 	import type { EventTemplate } from 'nostr-tools/pure';
 	import {
 		readServerConfig,
+		uploadFile,
 		type FileUploadResponse,
 		type OptionalFormDataFields
 	} from 'nostr-tools/nip96';
 	import { getToken } from 'nostr-tools/nip98';
-	import { uploadFile } from '$lib/nip96';
 
 	let { uploaderURLs, targetUrlToUpload }: { uploaderURLs: string[]; targetUrlToUpload: string } =
 		$props();
