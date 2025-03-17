@@ -3,6 +3,7 @@
 	import {
 		readServerConfig,
 		uploadFile,
+		type DelayedProcessingResponse,
 		type FileUploadResponse,
 		type OptionalFormDataFields
 	} from 'nostr-tools/nip96';
@@ -15,17 +16,19 @@
 	let isInProcess: boolean = $state(false);
 
 	const uploadFileExec = async () => {
-		isInProcess = true;
-		const nostr = window.nostr;
-		if (nostr === undefined) {
-			isInProcess = false;
+		if (filesToUpload === undefined || filesToUpload.length === 0) {
 			return;
 		}
-		const f = (e: EventTemplate) => nostr.signEvent(e);
-		const c = await readServerConfig(targetUrlToUpload);
-		const s = await getToken(c.api_url, 'POST', f, true);
+		const nostr = window.nostr;
+		if (nostr === undefined) {
+			return;
+		}
+		isInProcess = true;
+		const sign = (e: EventTemplate) => nostr.signEvent(e);
+		const config = await readServerConfig(targetUrlToUpload);
+		const token = await getToken(config.api_url, 'POST', sign, true);
 		let file: File | undefined;
-		for (const f of filesToUpload ?? []) {
+		for (const f of filesToUpload) {
 			file = f;
 		}
 		if (file === undefined) {
@@ -36,7 +39,45 @@
 			size: String(file.size),
 			content_type: file.type
 		};
-		fileUploadResponse = await uploadFile(file, c.api_url, s, option);
+		console.info('file uploading...');
+		fileUploadResponse = await uploadFile(file, config.api_url, token, option);
+		if (fileUploadResponse.status === 'error') {
+			console.warn(fileUploadResponse.message);
+			isInProcess = false;
+			return;
+		}
+		if (fileUploadResponse.status === 'processing') {
+			console.info(fileUploadResponse.message);
+			const processing_url = fileUploadResponse.processing_url;
+			if (processing_url === undefined) {
+				isInProcess = false;
+				return;
+			}
+			const request = new Request(processing_url);
+			const sleep = (timeout: number) => new Promise((handler) => setTimeout(handler, timeout));
+			let retry: number = 5;
+			while (true) {
+				const response = await fetch(request);
+				if (response.status === 201) {
+					break;
+				}
+				const delayedProcessingResponse: DelayedProcessingResponse = await response.json();
+				if (delayedProcessingResponse.status === 'error') {
+					console.warn(delayedProcessingResponse.message);
+					isInProcess = false;
+					return;
+				}
+				console.info(delayedProcessingResponse);
+				retry--;
+				if (retry < 0) {
+					console.warn('timeout');
+					isInProcess = false;
+					return;
+				}
+				await sleep(1000);
+			}
+		}
+		console.info('file uploading complete');
 		isInProcess = false;
 	};
 
