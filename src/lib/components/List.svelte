@@ -25,17 +25,17 @@
 			isInProcess = false;
 			return;
 		}
-		const f = (e: EventTemplate) => nostr.signEvent(e);
-		const c = await readServerConfig(targetUrlToList);
+		const sign = (e: EventTemplate) => nostr.signEvent(e);
+		const config = await readServerConfig(targetUrlToList);
 		const params = {
 			page: String(listPage),
 			count: String(listCount)
 		};
 		const p = new URLSearchParams(params).toString();
-		const serverApiUrl = `${c.api_url}?${p}`;
-		const s = await getToken(serverApiUrl, 'GET', f, true);
+		const serverApiUrl = `${config.api_url}?${p}`;
+		const token = await getToken(serverApiUrl, 'GET', sign, true);
 		try {
-			fileListResponse = await listFiles(serverApiUrl, s);
+			fileListResponse = await listFiles(serverApiUrl, token);
 		} catch (error) {
 			console.error(error);
 			fileListResponse = undefined;

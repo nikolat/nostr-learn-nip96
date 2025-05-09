@@ -19,16 +19,16 @@
 			isInProcess = false;
 			return;
 		}
-		const f = (e: EventTemplate) => nostr.signEvent(e);
-		const c = await readServerConfig(targetUrlToDelete);
-		let serverApiUrl = c.api_url;
+		const sign = (e: EventTemplate) => nostr.signEvent(e);
+		const config = await readServerConfig(targetUrlToDelete);
+		let serverApiUrl = config.api_url;
 		if (!serverApiUrl.endsWith('/')) {
 			serverApiUrl += '/';
 		}
 		serverApiUrl += fileHashToDelete;
 		try {
-			const s = await getToken(serverApiUrl, 'DELETE', f, true);
-			fileDeleteResponse = await deleteFile(fileHashToDelete, c.api_url, s);
+			const token = await getToken(serverApiUrl, 'DELETE', sign, true);
+			fileDeleteResponse = await deleteFile(fileHashToDelete, serverApiUrl, token);
 		} catch (error) {
 			console.error(error);
 		}
@@ -51,7 +51,7 @@
 			<label for="file-hash-to-delete">The SHA-256 hash of the original file</label>
 		</dt>
 		<dd>
-			<input id="file-hash-to-delete" type="text" value={fileHashToDelete} />
+			<input id="file-hash-to-delete" type="text" bind:value={fileHashToDelete} />
 		</dd>
 		<dt>
 			<label for="delete">Delete</label> (required
@@ -62,8 +62,10 @@
 			> extension)
 		</dt>
 		<dd>
-			<button id="delete" onclick={deleteFileExec} disabled={!fileHashToDelete || isInProcess}
-				>Delete</button
+			<button
+				id="delete"
+				onclick={deleteFileExec}
+				disabled={fileHashToDelete.length === 0 || isInProcess}>Delete</button
 			>
 		</dd>
 		<dt>Result</dt>
