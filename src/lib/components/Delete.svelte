@@ -28,7 +28,7 @@
 		serverApiUrl += fileHashToDelete;
 		try {
 			const token = await getToken(serverApiUrl, 'DELETE', sign, true);
-			fileDeleteResponse = await deleteFile(fileHashToDelete, serverApiUrl, token);
+			fileDeleteResponse = await deleteFile(fileHashToDelete, config.api_url, token);
 		} catch (error) {
 			console.error(error);
 		}
