@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { EventTemplate } from 'nostr-tools/pure';
-	import { readServerConfig } from 'nostr-tools/nip96';
 	import { getToken } from 'nostr-tools/nip98';
-	import { listFiles, type FileListResponse } from '$lib/nip96';
+	import { listFiles, readServerConfig, type FileListResponse } from '$lib/nip96';
 
 	let {
 		uploaderURLs,

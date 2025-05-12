@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { EventTemplate } from 'nostr-tools/pure';
+	import { getToken } from 'nostr-tools/nip98';
 	import {
 		readServerConfig,
 		uploadFile,
 		type DelayedProcessingResponse,
 		type FileUploadResponse,
 		type OptionalFormDataFields
-	} from 'nostr-tools/nip96';
-	import { getToken } from 'nostr-tools/nip98';
+	} from '$lib/nip96';
 
 	let { uploaderURLs, targetUrlToUpload }: { uploaderURLs: string[]; targetUrlToUpload: string } =
 		$props();
