@@ -1,6 +1,6 @@
 # nostr-learn-nip96
 
-Just a [NIP-96](https://github.com/nostr-protocol/nips/blob/master/96.md) practise.
+Just a [NIP-96](https://github.com/nostr-protocol/nips/blob/master/96.md) practice.
 
 ## Libraries, frameworks, services and protocols
 
