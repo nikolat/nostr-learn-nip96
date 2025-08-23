@@ -52,13 +52,9 @@
 			isInProcess = false;
 			return;
 		}
-		if (fileUploadResponse.status === 'processing') {
-			console.info(fileUploadResponse.message);
-			const processing_url = fileUploadResponse.processing_url;
-			if (processing_url === undefined) {
-				isInProcess = false;
-				return;
-			}
+		console.info($state.snapshot(fileUploadResponse));
+		const processing_url = fileUploadResponse.processing_url;
+		if (processing_url !== undefined) {
 			const sleep = (timeout: number) => new Promise((handler) => setTimeout(handler, timeout));
 			let retry: number = 5;
 			while (true) {
@@ -78,7 +74,7 @@
 					isInProcess = false;
 					return;
 				}
-				console.info(delayedProcessingResponse);
+				console.info($state.snapshot(delayedProcessingResponse));
 				retry--;
 				if (retry < 0) {
 					console.warn('timeout');
