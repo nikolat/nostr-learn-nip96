@@ -15,6 +15,7 @@
 	let filesToUpload: FileList | undefined = $state();
 	let fileUploadResponse: FileUploadResponse | undefined = $state();
 	let isInProcess: boolean = $state(false);
+	let uploadLog: string = $state('');
 
 	const compressAndUpload = async () => {
 		const file = await compressImage();
@@ -25,6 +26,7 @@
 	};
 
 	const compressImage = async (): Promise<File | null> => {
+		uploadLog = '';
 		if (filesToUpload === undefined || filesToUpload.length === 0) {
 			return null;
 		}
@@ -36,9 +38,9 @@
 			return null;
 		}
 
+		const round = (n: number): number => Math.round(100 * n) / 100;
 		const imageFile = file;
-		console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
-		console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
+		uploadLog += `${round(imageFile.size / 1024 / 1024)} MB`;
 
 		const options = {
 			maxSizeMB: 1,
@@ -46,8 +48,7 @@
 			useWebWorker: true
 		};
 		const compressedFile: File = await imageCompression(imageFile, options);
-		console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-		console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+		uploadLog += ` => ${round(compressedFile.size / 1024 / 1024)} MB`;
 		return compressedFile;
 	};
 
@@ -143,7 +144,9 @@
 				href="https://github.com/nostr-protocol/nips/blob/master/07.md"
 				target="_blank"
 				rel="noopener noreferrer">NIP-07</a
-			> extension)
+			>
+			extension)
+			<br /><span>{uploadLog}</span>
 		</dt>
 		<dd>
 			<button
