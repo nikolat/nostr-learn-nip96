@@ -18,15 +18,21 @@
 	let uploadLog: string = $state('');
 
 	const compressAndUpload = async () => {
-		const file = await compressImage();
+		let file: File | null = getFile();
 		if (file === null) {
 			return;
 		}
-		await uploadFileExec(file);
+		isInProcess = true;
+		try {
+			file = await compressImage(file);
+			await uploadFileExec(file);
+		} catch (error) {
+			console.error(error);
+		}
+		isInProcess = false;
 	};
 
-	const compressImage = async (): Promise<File | null> => {
-		uploadLog = '';
+	const getFile = (): File | null => {
 		if (filesToUpload === undefined || filesToUpload.length === 0) {
 			return null;
 		}
@@ -37,17 +43,19 @@
 		if (file === undefined) {
 			return null;
 		}
+		return file;
+	};
 
+	const compressImage = async (file: File): Promise<File> => {
+		uploadLog = '';
 		const round = (n: number): number => Math.round(100 * n) / 100;
-		const imageFile = file;
-		uploadLog += `${round(imageFile.size / 1024 / 1024)} MB`;
-
+		uploadLog += `${round(file.size / 1024 / 1024)} MB`;
 		const options = {
 			maxSizeMB: 1,
 			maxWidthOrHeight: 1920,
 			useWebWorker: true
 		};
-		const compressedFile: File = await imageCompression(imageFile, options);
+		const compressedFile: File = await imageCompression(file, options);
 		uploadLog += ` => ${round(compressedFile.size / 1024 / 1024)} MB`;
 		return compressedFile;
 	};
@@ -57,7 +65,6 @@
 		if (nostr === undefined) {
 			return;
 		}
-		isInProcess = true;
 		const sign = (e: EventTemplate) => nostr.signEvent(e);
 		const config = await readServerConfig(targetUrlToUpload);
 		const token = await getToken(config.api_url, 'POST', sign, true);
@@ -66,17 +73,9 @@
 			content_type: file.type
 		};
 		console.info('file uploading...');
-		try {
-			fileUploadResponse = await uploadFile(file, config.api_url, token, option);
-		} catch (error) {
-			console.error(error);
-			isInProcess = false;
-			return;
-		}
+		fileUploadResponse = await uploadFile(file, config.api_url, token, option);
 		if (fileUploadResponse.status === 'error') {
-			console.warn(fileUploadResponse.message);
-			isInProcess = false;
-			return;
+			throw Error(fileUploadResponse.message);
 		}
 		console.info($state.snapshot(fileUploadResponse));
 		const processing_url = fileUploadResponse.processing_url;
@@ -96,22 +95,17 @@
 				}
 				const delayedProcessingResponse: DelayedProcessingResponse = await response.json();
 				if (delayedProcessingResponse.status === 'error') {
-					console.warn(delayedProcessingResponse.message);
-					isInProcess = false;
-					return;
+					throw Error(delayedProcessingResponse.message);
 				}
 				console.info($state.snapshot(delayedProcessingResponse));
 				retry--;
 				if (retry < 0) {
-					console.warn('timeout');
-					isInProcess = false;
-					return;
+					throw Error('timeout');
 				}
 				await sleep(1000);
 			}
 		}
 		console.info('file uploading complete');
-		isInProcess = false;
 	};
 
 	const uploadedFileUrl = $derived(
