@@ -15,6 +15,7 @@
 		"test": "npm run test:unit -- --run"
 	},
 	"dependencies": {
+		"browser-image-compression": "^2.0.2",
 		"nostr-fetch": "^0.17.0",
 		"nostr-tools": "^2.16.2"
 	},

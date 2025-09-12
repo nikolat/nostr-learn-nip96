@@ -8,6 +8,7 @@
 		type FileUploadResponse,
 		type OptionalFormDataFields
 	} from '$lib/nip96';
+	import imageCompression from 'browser-image-compression';
 
 	let { uploaderURLs, targetUrlToUpload }: { uploaderURLs: string[]; targetUrlToUpload: string } =
 		$props();
@@ -15,10 +16,42 @@
 	let fileUploadResponse: FileUploadResponse | undefined = $state();
 	let isInProcess: boolean = $state(false);
 
-	const uploadFileExec = async () => {
-		if (filesToUpload === undefined || filesToUpload.length === 0) {
+	const compressAndUpload = async () => {
+		const file = await compressImage();
+		if (file === null) {
 			return;
 		}
+		await uploadFileExec(file);
+	};
+
+	const compressImage = async (): Promise<File | null> => {
+		if (filesToUpload === undefined || filesToUpload.length === 0) {
+			return null;
+		}
+		let file: File | undefined;
+		for (const f of filesToUpload) {
+			file = f;
+		}
+		if (file === undefined) {
+			return null;
+		}
+
+		const imageFile = file;
+		console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
+		console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
+
+		const options = {
+			maxSizeMB: 1,
+			maxWidthOrHeight: 1920,
+			useWebWorker: true
+		};
+		const compressedFile: File = await imageCompression(imageFile, options);
+		console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
+		console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+		return compressedFile;
+	};
+
+	const uploadFileExec = async (file: File) => {
 		const nostr = window.nostr;
 		if (nostr === undefined) {
 			return;
@@ -27,14 +60,6 @@
 		const sign = (e: EventTemplate) => nostr.signEvent(e);
 		const config = await readServerConfig(targetUrlToUpload);
 		const token = await getToken(config.api_url, 'POST', sign, true);
-		let file: File | undefined;
-		for (const f of filesToUpload) {
-			file = f;
-		}
-		if (file === undefined) {
-			isInProcess = false;
-			return;
-		}
 		const option: OptionalFormDataFields = {
 			size: String(file.size),
 			content_type: file.type
@@ -123,7 +148,7 @@
 		<dd>
 			<button
 				id="upload"
-				onclick={uploadFileExec}
+				onclick={compressAndUpload}
 				disabled={filesToUpload === undefined || filesToUpload.length === 0 || isInProcess}
 				>Upload</button
 			>
