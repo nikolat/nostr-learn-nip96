@@ -7,7 +7,6 @@ export const defaultUploaderURLs = [
 	'https://nostpic.com',
 	'https://nostr.build',
 	'https://nostrcheck.me',
-	'https://nostr.download',
 	'https://files.sovbit.host'
 ];
 
