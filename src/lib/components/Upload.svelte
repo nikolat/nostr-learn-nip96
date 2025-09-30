@@ -8,12 +8,14 @@
 		type FileUploadResponse,
 		type OptionalFormDataFields
 	} from '$lib/nip96';
+	import { browser } from '$app/environment';
 	import imageCompression from 'browser-image-compression';
 
 	let { uploaderURLs, targetUrlToUpload }: { uploaderURLs: string[]; targetUrlToUpload: string } =
 		$props();
 	let filesToUpload: FileList | undefined = $state();
 	let fileUploadResponse: FileUploadResponse | undefined = $state();
+	let errorMessage: string | undefined = $state();
 	let isInProcess: boolean = $state(false);
 	let uploadLog: string = $state('');
 
@@ -23,11 +25,13 @@
 			return;
 		}
 		isInProcess = true;
+		errorMessage = undefined;
 		try {
 			file = await compressImage(file);
 			await uploadFileExec(file);
 		} catch (error) {
 			console.error(error);
+			errorMessage = (error as Error).message;
 		}
 		isInProcess = false;
 	};
@@ -125,7 +129,7 @@
 			</select>
 			<details>
 				<summary>Server Config</summary>
-				<pre>{#if targetUrlToUpload}{#await readServerConfig(targetUrlToUpload)}connecting...{:then serverConfig}<code
+				<pre>{#if targetUrlToUpload}{#await browser ? readServerConfig(targetUrlToUpload) : Promise.resolve()}connecting...{:then serverConfig}<code
 								>{JSON.stringify(serverConfig, undefined, 2)}</code
 							>{/await}{/if}</pre>
 			</details>
@@ -186,7 +190,11 @@
 		<dd>
 			<details>
 				<summary>Result</summary>
-				<pre><code>{JSON.stringify(fileUploadResponse, undefined, 2) ?? ''}</code></pre>
+				{#if errorMessage === undefined}
+					<pre><code>{JSON.stringify(fileUploadResponse, undefined, 2) ?? ''}</code></pre>
+				{:else}
+					<pre class="error">{errorMessage}</pre>
+				{/if}
 			</details>
 		</dd>
 	</dl>
@@ -205,5 +213,8 @@
 	}
 	button.copy:active > svg {
 		fill: yellow;
+	}
+	.error {
+		color: red;
 	}
 </style>

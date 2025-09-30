@@ -13,12 +13,14 @@
 		fileHashToDelete: string;
 	} = $props();
 	let fileListResponse: FileListResponse | undefined = $state();
+	let errorMessage: string | undefined = $state();
 	let listPage: number = $state(0);
 	let listCount: number = $state(10);
 	let isInProcess: boolean = $state(false);
 
 	const listFilesExec = async () => {
 		isInProcess = true;
+		errorMessage = undefined;
 		const nostr = window.nostr;
 		if (nostr === undefined) {
 			isInProcess = false;
@@ -38,6 +40,7 @@
 		} catch (error) {
 			console.error(error);
 			fileListResponse = undefined;
+			errorMessage = (error as Error).message;
 		}
 		isInProcess = false;
 	};
@@ -112,7 +115,11 @@
 			{/if}
 			<details>
 				<summary>Result</summary>
-				<pre><code>{JSON.stringify(fileListResponse, undefined, 2) ?? ''}</code></pre>
+				{#if errorMessage === undefined}
+					<pre><code>{JSON.stringify(fileListResponse, undefined, 2) ?? ''}</code></pre>
+				{:else}
+					<pre class="error">{errorMessage}</pre>
+				{/if}
 			</details>
 		</dd>
 	</dl>
@@ -144,5 +151,8 @@
 		position: absolute;
 		top: 0;
 		right: 0;
+	}
+	.error {
+		color: red;
 	}
 </style>

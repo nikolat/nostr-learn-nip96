@@ -10,10 +10,12 @@
 	}: { uploaderURLs: string[]; targetUrlToDelete: string; fileHashToDelete: string } = $props();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let fileDeleteResponse: any = $state();
+	let errorMessage: string | undefined = $state();
 	let isInProcess: boolean = $state(false);
 
 	const deleteFileExec = async () => {
 		isInProcess = true;
+		errorMessage = undefined;
 		const nostr = window.nostr;
 		if (nostr === undefined) {
 			isInProcess = false;
@@ -31,6 +33,8 @@
 			fileDeleteResponse = await deleteFile(fileHashToDelete, config.api_url, token);
 		} catch (error) {
 			console.error(error);
+			fileDeleteResponse = undefined;
+			errorMessage = (error as Error).message;
 		}
 		isInProcess = false;
 	};
@@ -72,8 +76,18 @@
 		<dd>
 			<details>
 				<summary>Result</summary>
-				<pre><code>{JSON.stringify(fileDeleteResponse, undefined, 2) ?? ''}</code></pre>
+				{#if errorMessage === undefined}
+					<pre><code>{JSON.stringify(fileDeleteResponse, undefined, 2) ?? ''}</code></pre>
+				{:else}
+					<pre class="error">{errorMessage}</pre>
+				{/if}
 			</details>
 		</dd>
 	</dl>
 </fieldset>
+
+<style>
+	.error {
+		color: red;
+	}
+</style>
